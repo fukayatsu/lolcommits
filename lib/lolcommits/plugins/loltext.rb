@@ -1,8 +1,12 @@
+# coding: utf-8
+
 module Lolcommits
   class Loltext < Plugin
 
     def initialize(runner)
       super
+
+      @font_location = runner.font
 
       self.name    = 'loltext'
       self.default = true
@@ -14,7 +18,7 @@ module Lolcommits
 
     # use minimagick wrapper
     def mm_run
-      font_location = File.join(Configuration::LOLCOMMITS_ROOT, "vendor", "fonts", "Impact.ttf")
+      font_location = @font_location || File.join(Configuration::LOLCOMMITS_ROOT, "vendor", "fonts", "Impact.ttf")
 
       plugdebug "Annotating image via MiniMagick"
       image = MiniMagick::Image.open(self.runner.main_image)
@@ -76,12 +80,12 @@ module Lolcommits
       escape_quotes wrapped_text
     end
 
-    # conversion for quotation marks to avoid shell interpretation 
+    # conversion for quotation marks to avoid shell interpretation
     # does not seem to be a safe way to escape cross-platform?
     def escape_quotes(text)
       text.gsub(/"/, "''")
     end
-    
+
     # convenience method for word wrapping
     # based on https://github.com/cmdrkeene/memegen/blob/master/lib/meme_generator.rb
     def word_wrap(text, col = 27)
